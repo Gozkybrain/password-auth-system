@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 export default function PasswordInput({
-  label = "Password checker",
+  label = "Password Generator",
   label2 = "Character Length",
   placeholder = "Enter your password",
   onChange,
@@ -12,22 +12,62 @@ export default function PasswordInput({
   const [includeLowercase, setIncludeLowercase] = useState(false);
   const [includeNumbers, setIncludeNumbers] = useState(false);
   const [includeSymbols, setIncludeSymbols] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState("");
+  const [passwordLength, setPasswordLength] = useState(8); // Default password length
 
-  const handlePasswordChange = (e) => {
-    const newPassword = e.target.value;
-    setPassword(newPassword);
-    if (onChange) {
-      onChange(newPassword);
+  const generatePassword = () => {
+    const uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
+    const numberChars = "0123456789";
+    const symbolChars = "!@#$%^&*()_+~`|}{[]\\:;?><,./-=";
+    let characterPool = "";
+
+    if (includeUppercase) characterPool += uppercaseChars;
+    if (includeLowercase) characterPool += lowercaseChars;
+    if (includeNumbers) characterPool += numberChars;
+    if (includeSymbols) characterPool += symbolChars;
+
+    if (characterPool === "") {
+      setPassword("");
+      setPasswordStrength("No criteria selected");
+      return;
+    }
+
+    let generatedPassword = "";
+    for (let i = 0; i < passwordLength; i++) {
+      const randomIndex = Math.floor(Math.random() * characterPool.length);
+      generatedPassword += characterPool[randomIndex];
+    }
+    setPassword(generatedPassword);
+    checkPasswordStrength(generatedPassword);
+  };
+
+  //function to check strength
+  const checkPasswordStrength = (pwd) => {
+    const strongPasswordCriteria =
+      includeUppercase && includeLowercase && includeNumbers && includeSymbols;
+    const mediumPasswordCriteria =
+      (includeUppercase && includeNumbers) ||
+      (includeLowercase && includeSymbols);
+
+    if (strongPasswordCriteria && pwd.length >= 10) {
+      setPasswordStrength("High");
+    } else if (mediumPasswordCriteria && pwd.length >= 8) {
+      setPasswordStrength("Medium");
+    } else {
+      setPasswordStrength("Low");
     }
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+  //function to copy password
+  const copyPassword = () => {
+    navigator.clipboard.writeText(password);
+    alert("Password copied to clipboard");
   };
 
   return (
     <div>
-      <div className="max-w-md mx-auto mt-10 p-5 bg-[#0c100c] shadow-lg">
+      <div className="max-w-md mx-auto mt-10 p-5 bg-black shadow-lg">
         <label
           htmlFor="password"
           className="block text-sm font-medium text-gray-200 text-[18px] text-center mb-5"
@@ -36,35 +76,46 @@ export default function PasswordInput({
         </label>
         <div className="relative">
           <input
-            type={showPassword ? "text" : "password"}
+            type="text"
             id="password"
-            placeholder={placeholder}
+            placeholder="P4$5W0rD!"
             value={password}
-            onChange={handlePasswordChange}
+            readOnly
             className="block w-full px-4 py-5 bg-[#555555] text-white text-[5px] focus:border-gray-500 sm:text-sm"
           />
           <button
             type="button"
-            onClick={togglePasswordVisibility}
-            className="absolute inset-y-0 right-0 flex items-center px-4 text-sm text-gray-400 hover:text-gray-100"
+            onClick={copyPassword}
+            className="absolute inset-y-0 right-0 flex items-center px-4 text-sm text-green-500 hover:text-gray-100"
           >
-            {showPassword ? "Hide" : "Show"}
+            Copy
           </button>
         </div>
-        <p className="mt-2 text-sm text-gray-400">
-          Your password must be at least 8 characters long.
-        </p>
       </div>
-      <div className="max-w-md mx-auto mt-3 p-6 pb-10 bg-[#0c100c] shadow-lg">
-        <label
-          htmlFor="character length"
-          className="block text-sm font-medium mb-6 text-gray-200 text-xl mb-2"
-        >
-          {label2}
-        </label>
-        
+
+      <div className="max-w-md mx-auto mt-3 p-6 pb-10 bg-black shadow-lg">
+        <div className="flex flex-row justify-between">
+          {" "}
+          <label
+            htmlFor="character-length"
+            className="block text-sm font-medium mb-6 text-gray-200 "
+          >
+            {label2}
+          </label>
+          <p className="text-green-500 text-2xl">{passwordLength}</p>
+        </div>
+
+        <input
+          type="range"
+          min="6"
+          max="20"
+          value={passwordLength}
+          onChange={(e) => setPasswordLength(e.target.value)}
+          className="w-full mb-4 text-green-500"
+        />
+
+        {/* Checkboxes for password criteria */}
         <div className="flex items-center space-x-2 mb-5">
-          {/* Uppercase Letters */}
           <input
             type="checkbox"
             id="uppercase-checkbox"
@@ -96,7 +147,6 @@ export default function PasswordInput({
         </div>
 
         <div className="flex items-center space-x-2 mb-5">
-          {/* Lowercase Letters */}
           <input
             type="checkbox"
             id="lowercase-checkbox"
@@ -128,7 +178,6 @@ export default function PasswordInput({
         </div>
 
         <div className="flex items-center space-x-2 mb-5">
-          {/* Numbers */}
           <input
             type="checkbox"
             id="numbers-checkbox"
@@ -160,7 +209,6 @@ export default function PasswordInput({
         </div>
 
         <div className="flex items-center space-x-2 mb-5">
-          {/* Symbols */}
           <input
             type="checkbox"
             id="symbols-checkbox"
@@ -190,10 +238,18 @@ export default function PasswordInput({
           </label>
           <span className="text-gray-300">Include Symbols</span>
         </div>
-        <div className="bg-[#343434] p-4 flex">
-            <p className="text-gray-400 text-center">STRENGTH</p>
-            <p className="text-2xl pl-[60px] text-gray-300 text-center"> MEDIUM </p>
+        <div className="bg-[#343434] p-4 flex justify-between">
+          <p className="text-gray-400 text-center">STRENGTH</p>
+          <p className="text-2xl pl-[60px] text-gray-300 text-center mr-8">
+            {passwordStrength}
+          </p>
         </div>
+        <button
+          onClick={generatePassword}
+          className="w-full mt-2 p-4 text-center bg-green-500 hover:bg-transparent border border-black hover:text-green-500 hover:border-green-500"
+        >
+          Generate Password
+        </button>
       </div>
     </div>
   );
