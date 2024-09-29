@@ -312,7 +312,7 @@ export default function PasswordInput({
         </div>
         <div className="bg-[#343434] p-4 flex justify-between">
           <p className="text-gray-400 text-center">STRENGTH</p>
-          <p className="text-2xl pl-[60px] text-gray-300 text-center mr-8">
+          <p className="text-2xl pl-[10px] text-gray-300 text-center mr-8">
             {passwordStrength}
           </p>
         </div>

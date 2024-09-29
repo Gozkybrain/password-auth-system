@@ -1,8 +1,18 @@
-# React + Vite
+# Password Generation App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+The Password Generation App allows users to create strong, customizable passwords based on specified criteria. Users can choose to include uppercase letters, lowercase letters, numbers, and symbols, and then generate a secure password with a single click.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## Author
+This project was originally created by 8th God.
+
+## Features
+* Generate secure passwords with customizable criteria.
+* Options to include:
+    * Uppercase letters
+   * Lowercase letters
+    * Numbers
+    * Symbols
+* User-friendly interface.

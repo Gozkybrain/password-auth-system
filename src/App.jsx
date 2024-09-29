@@ -5,7 +5,8 @@ function App() {
   const router = createBrowserRouter(createRoutesFromElements(
     <Route>
         <Route index element={<Home />}/>
-        <Route path="/home" element={<Home/>}/>
+        {/* catch all 404 and redirect back to home */}
+        <Route path="/*" element={<Home/>}/>
     </Route>
 )) 
   return <RouterProvider router={router}/>
